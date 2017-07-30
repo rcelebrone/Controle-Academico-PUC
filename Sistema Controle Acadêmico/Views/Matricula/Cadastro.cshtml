@@ -1,0 +1,136 @@
+﻿@{
+    ViewBag.Title = "Cadastro de solicitação de matrícula";
+}
+
+<h2 class="text-center">Solicitação de matrícula</h2>
+
+<hr />
+
+<form>
+    <div class="row">
+        <div class="form-group col-md-3 col-sm-12">
+            <label for="nomeAluno">Nome do aluno</label>
+            <input tabindex="1" type="text" class="form-control" id="nomeAluno" placeholder="Digite o nome do aluno" required>
+        </div>
+        <div class="form-group col-md-2 col-sm-12">
+            <label for="dataDeNascimento">Data de nascimento</label>
+            <input tabindex="2" type="date" class="form-control" id="dataDeNascimento" placeholder="Digite a data de nascimento" required>
+        </div>
+        <div class="form-group col-md-3 col-sm-12">
+            <label for="telefoneCelular">Número do celular</label>
+            <input tabindex="3" type="tel" class="form-control" id="telefoneCelular" placeholder="Digite a número do telefone celular" required>
+        </div>
+        <div class="form-group col-md-3 col-sm-12">
+            <label for="telefoneResidencial">Número de telefone alternativo</label>
+            <input tabindex="4" type="tel" class="form-control" id="telefoneResidencial" placeholder="Digite um número de telefone alternativo">
+        </div>
+    </div>
+
+    <hr />
+    
+    <div class="row">
+        <div class="form-group col-md-2 col-sm-12">
+            <label for="cep">Cep</label>
+            <input tabindex="5" type="text" class="form-control" id="cep" placeholder="Digite o cep" required>
+        </div>
+        <div class="form-group col-md-3 col-sm-9">
+            <label for="logradouro">Logradouro</label>
+            <input type="text" class="form-control" id="logradouro" placeholder="Pesquise o logradouro pelo CEP" required readonly>
+        </div>
+        <div class="form-group col-md-1 col-sm-3">
+            <label for="numero">Número</label>
+            <input tabindex="6" type="text" class="form-control" id="numero" placeholder="Digite o número" required>
+        </div>
+        <div class="form-group col-md-2 col-sm-12">
+            <label for="bairro">Bairro</label>
+            <input type="text" class="form-control" id="bairro" placeholder="Pesquise o bairro pelo CEP" required readonly>
+        </div>
+        <div class="form-group col-md-3 col-sm-9">
+            <label for="cidade">Cidade</label>
+            <input type="text" class="form-control" id="cidade" placeholder="Pesquise a cidade pelo CEP" required readonly>
+        </div>
+        <div class="form-group col-md-1 col-sm-3">
+            <label for="uf">UF</label>
+            <input type="text" class="form-control" id="uf" placeholder="Pesquise o estado pelo CEP" required readonly>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="row">
+        <div class="form-group col-md-3 col-sm-12">
+            <label for="anexoRg">Documento de identificação (RG)</label>
+            <input tabindex="7" type="file" id="anexoRg" placeholder="Selecione o documento de identificação (RG)" required>
+            <p class="help-block">Inclua um arquivo digitalizado do documento de identificação (RG) do aluno.</p>
+        </div>
+        <div class="form-group col-md-3 col-sm-12">
+            <label for="anexoComprovanteConclusaoCurso">Comprovante de conclusão de curso</label>
+            <input tabindex="8" type="file" id="anexoComprovanteConclusaoCurso" placeholder="Selecione o comprovante de conclusão de curso" required>
+            <p class="help-block">Inclua um arquivo digitalizado do comprovante de conclusão do ensino médio para cursos de graduação e comprovante de conclusão da graduação para cursos de pós-graduação.</p>
+        </div>
+        <div class="form-group col-md-3 col-sm-12">
+            <label for="anexoCpf">Documento de identificação (CPF)</label>
+            <input tabindex="9" type="file" id="anexoCPF" placeholder="Selecione o documento de identificação (CPF)" required>
+            <p class="help-block">Inclua um arquivo digitalizado do documento de identificação (CPF) do aluno.</p>
+        </div>
+        <div class="form-group col-md-3 col-sm-12">
+            <label for="anexoComprovanteResidencia">Comprovante de residência</label>
+            <input tabindex="10" type="file" id="anexoComprovanteResidencia" placeholder="Selecione o comprovante de residência" required>
+            <p class="help-block">Inclua um arquivo digitalizado de qualquer comprovante de residência no nome do aluno (conta de água, luz, telefone, etc&hellip;).</p>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="row">
+        <div class="col-sm-12">
+            <button type="submit" class="btn btn-success pull-right">Solicitar minha matrícula</button>
+        </div>
+    </div>
+
+</form>
+
+<h3 id="mensagemSucesso" class="text text-success text-center hide">Os dados foram enviados. Sua solicitação de matrícula foi efetivada, aguarde o contato.</h3>
+
+@section scripts{
+    <script>
+        var input = document.getElementsByTagName('input');
+        for (var i = 0; i < input.length; i++) {
+            input[i].oninvalid = function (e) {
+                e.target.setCustomValidity("");
+                if (!e.target.validity.valid) {
+                    e.target.setCustomValidity(e.target.placeholder);
+                }
+            };
+            input[i].oninput = function (e) {
+                e.target.setCustomValidity("");
+            };
+        };
+
+        document.getElementById('nomeAluno').focus();
+
+        $("#cep").on("focusout", function () {
+            $.get("https:" + "//viacep.com.br/ws/" + $(this).val().replace(/\D/g, '') + "/json/", {}, function (data) {
+                $(this).val(data.cep);
+                $("#logradouro").val(data.logradouro);
+                $("#bairro").val(data.bairro);
+                $("#cidade").val(data.localidade);
+                $("#uf").val(data.uf);
+            }).fail(function () {
+                console.info("O CEP informado não é valido");
+                $(this).val("");
+                $("#logradouro").val("");
+                $("#bairro").val("");
+                $("#cidade").val("");
+                $("#uf").val("");
+            });
+        });
+
+        $("form").on("submit", function (e) {
+            e.preventDefault();
+            //ajax chamando a API para gravar a solicitação de matrícula
+            $(this).hide();
+            $("#mensagemSucesso").removeClass("hide");
+        });
+    </script>
+}
