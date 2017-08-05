@@ -23,9 +23,7 @@ namespace sca.Controllers.api
                 {
                     string json = r.ReadToEnd();
                     var items = JsonConvert.DeserializeObject<List<CursoDetalhe>>(json);
-                    items.Where(x => x.Curso.ToLower().Contains(termo.ToLower()) || x.Info.Contains(termo.ToLower()));
-
-                    return items;
+                    return items.Where(x => x.Curso.ToLower().Contains(termo.ToLower()) || x.Info.Contains(termo.ToLower())).ToList();
                 }
             });
             return curso;
