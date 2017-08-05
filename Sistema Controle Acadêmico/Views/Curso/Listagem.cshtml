@@ -4,18 +4,54 @@
 
 <h2>Cursos disponíveis</h2>
 
-<ul class="list-group">
+<form>
+    <div class="row">
+        <div class="form-group col-md-6 col-sm-12">
+            <label for="pesquisa">Pesquisa</label>
+            <input tabindex="1" type="text" data-bind="event: { keyup: pesquisar }" class="form-control" id="pesquisa" placeholder="Digite o nome de um curso" />
+            <sub class="text-danger">A pesquisa é feita a partir do terceiro caracter do nome do curso</sub>
+        </div>
+    </div>
+</form>
+<p class="alert alert-info text-center" data-bind="visible: (cursos().length == 0)">
+    Pesquise por um curso. Após a pesquisa, os cursos serão listados aqui.
+</p>
+<ul class="list-group" data-bind="foreach: cursos">
     <li class="list-group-item">
         <div class="row">
             <div class="col-md-3 list-group-item-heading">
-                <h4>Nome do curso</h4>
-                <h5>Nome da instituição</h5>
+                <h4 data-bind="text: Curso">Nome do curso</h4>
+                <h5 data-bind="text: Instituicao">Nome da instituição</h5>
             </div>
             <div class="col-md-8 list-group-item-text">
-                <p class="text-info">Descrição curta sobre sobre os objetivos do curso.</p>
-                <sub class="text-info">Vagas disponíveis: 000</sub>
+                <p class="text-info" data-bind="text: Info">Descrição curta sobre sobre os objetivos do curso.</p>
+                <sub class="text-info" data-bind="text: 'Vagas disponíveis: ' + Vagas">Vagas disponíveis: 000</sub>
             </div>
-            <span class="tag tag-default tag-pill col-md-1 pull-right">0 no MEC</span>
+            <span class="tag tag-default tag-pill col-md-1 pull-right" data-bind="text: 'nota ' + Nota + ' no MEC'">nota 0 no MEC</span>
         </div>
     </li>
 </ul>
+
+@section scripts{
+    <script>
+        document.getElementById('pesquisa').focus();
+
+        function CursoViewModel() {
+            var self = this;
+            self.cursos = ko.observableArray([]);
+            self.pesquisar = function () {
+                var pesquisa = $("#pesquisa").val().replace('curso ', '');
+
+                if(self.cursos().length > 0)
+                    self.cursos.removeAll();
+
+                if (pesquisa.length >= 3)
+                {
+                    $.getJSON('/api/curso/' + pesquisa, self.cursos);
+                }
+            }
+        }
+
+        ko.applyBindings(new CursoViewModel());
+    </script>
+}

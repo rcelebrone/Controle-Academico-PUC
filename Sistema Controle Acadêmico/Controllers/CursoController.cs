@@ -9,7 +9,7 @@ namespace sca.Controllers
 {
     public class CursoController : Controller
     {
-        [OutputCache(Duration = (60 * 60 * 24), Location = OutputCacheLocation.Server)]
+        //[OutputCache(Duration = (60 * 60 * 24), Location = OutputCacheLocation.Server)]
         public ActionResult Listagem()
         {
             return View();
